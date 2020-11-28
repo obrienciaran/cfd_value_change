@@ -6,3 +6,13 @@ On Wednesday the 25th of November, trading broker 'Trading212' announced they wo
 Eventually, T212 postponed the leverage change until Tuesday the 1st of December at market open, 14:30 GMT. 
 
 This calculator was made to help users understand exactly how much money they need to upload to their account, to remain at a margin level of their choosing. 
+
+To use:
+- Download the server and ui R files.
+- Place them in a folder on your desktop called CFD_new_value.
+- Open R Studio and set the working directory to your desktop.
+
+Run this code:
+library(shiny)
+
+runApp('CFD_new_value')
