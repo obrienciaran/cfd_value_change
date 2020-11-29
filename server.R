@@ -16,28 +16,40 @@ shinyServer(function(input, output) {
     if ((input$account_value/(input$account_value+(input$blocked_funds*2.5)))*100 > input$target_margin)
       {
       switch(input$ops,
-             "How much do I need to top up by?" = 0)
+             "How much do I need to top up by to achieve target margin?" = 0)
       }
     # If target margin is greater than 50 and if the revised margin from T212 is less than the users target margin, the user must add funds
     else if((input$account_value/(input$account_value+(input$blocked_funds*2.5)))*100 && input$target_margin >= 50)
       {
       switch(input$ops,
-             "How much do I need to top up by?" = round(((2.5 * input$blocked_funds) / ((1 / (input$target_margin / 100)) - 1)) - input$account_value,digits =2)
+             "How much do I need to top up by to achieve target margin?" = round(((2.5 * input$blocked_funds) / ((1 / (input$target_margin / 100)) - 1)) - input$account_value,digits =2)
              )
       }
     # If target margin is less than 50 and if the revised margin from T212 is less than the users target margin, the user must add funds
     else if((input$account_value/(input$account_value+(input$blocked_funds*2.5)))*100 < input$target_margin && input$target_margin<50)
       {
       switch(input$ops,
-             "How much do I need to top up by?" = round((input$target_margin*.05*input$blocked_funds) - input$account_value,digits = 2)
+             "How much do I need to top up by to achieve target margin?" = round((input$target_margin*.05*input$blocked_funds) - input$account_value,digits = 2)
              )
       }
   })
 
-  output$current_margin <- renderText({
-    paste(round(input$account_value/(input$account_value + input$blocked_funds)*100,digits = 1),"%",sep = "")
-                                     })
+  # free funds
+  output$free_funds <- renderText({input$account_value - input$blocked_funds})
+ 
+  # current margin
+  if (input$account_value > input$blocked_funds)
+  {
+    output$current_margin <- renderText({ round(input$account_value/(input$account_value+input$blocked_funds), digits = 2)})
+  }
+  else if(input$account_value <= input$blocked_funds)
+  {
+    output$current_margin <- renderText({round((.5*(input$account_value))/input$blocked_funds, digits = 2)})
+  }
+
+  # New margin
+  output$revised_margin <- renderText({
+    paste(round(input$account_value/(input$account_value + input$blocked_funds*2.5)*100,digits = 1),"%",sep = "")
   })
 
-  
-  
+  })
