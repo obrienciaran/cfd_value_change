@@ -34,22 +34,42 @@ shinyServer(function(input, output) {
       }
   })
 
-  # free funds
-  output$free_funds <- renderText({input$account_value - input$blocked_funds})
- 
-  # current margin
-  if (input$account_value > input$blocked_funds)
-  {
-    output$current_margin <- renderText({ round(input$account_value/(input$account_value+input$blocked_funds), digits = 2)})
-  }
-  else if(input$account_value <= input$blocked_funds)
-  {
-    output$current_margin <- renderText({round((.5*(input$account_value))/input$blocked_funds, digits = 2)})
-  }
+  # Free funds
+  #ab <- reactive({req(input$account_value) - req(input$blocked_funds)})
+  #output$free_funds <- renderText({ab()})
+  ab <- reactive({
+    req(input$account_value,input$blocked_funds)
+    if (input$account_value - input$blocked_funds< 0){
+      freeFunds <- 0
+    }else { 
+      freeFunds <- input$account_value - input$blocked_funds
+    }
+})  
+  output$free_funds <- renderText({ab()})
+  
+  # Current margin
+  cm <- reactive({
+    req(input$account_value,input$blocked_funds)
+    if (input$account_value > input$blocked_funds){
+      curmargin <- paste(round((input$account_value/(input$account_value + input$blocked_funds)*100), digits = 2),"%",sep="")
+    }else { 
+      curmargin <- paste(round(((.5*(input$account_value))/input$blocked_funds)*100, digits = 2),"%",sep="")
+    }
+  })
+  output$current_margin <- renderText({cm()})
 
-  # New margin
-  output$revised_margin <- renderText({
-    paste(round(input$account_value/(input$account_value + input$blocked_funds*2.5)*100,digits = 1),"%",sep = "")
+  # Revised margin
+  rm <- reactive({
+    req(input$account_value,input$blocked_funds)
+    if (input$account_value > input$blocked_funds*2.5){
+      rmargin <- paste(round((input$account_value/(input$account_value + input$blocked_funds*2.5))*100, digits = 2),"%",sep="")
+    }else { 
+      rmargin <- paste(round((.5*(input$account_value))/(input$blocked_funds*2.5)*100, digits = 2),"%",sep="")
+    }
+  })
+  
+  output$revised_margin <- renderText({rm()})
+
   })
 
-  })
+
