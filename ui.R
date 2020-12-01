@@ -9,14 +9,17 @@ shinyUI(fluidPage(
 
    sidebarLayout(
     sidebarPanel(
-      numericInput("account_value", "Input your current total account value", 200),
-      numericInput("blocked_funds", "Input your current blocked funds amount", 100),
-      tags$b("Current margin:"),
-        h5(textOutput("current_margin")),
-      #sliderInput("current_margin", "Input your current margin", 0, min = 25, max = 100,step = 1),
-      sliderInput("target_margin", "Input the margin you want to end up at", 0, min = 25, max = 100, step = 0.1),
+      numericInput("account_value", "Input your ACCOUNT VALUE", 200),
+      numericInput("blocked_funds", "Input your BLOCKED FUNDS", 100),
+      h5(tags$b("FREE FUNDS:"),textOutput("free_funds", inline = TRUE)),
+      h6("If the FREE FUNDS figures shown above don’t match Trading 212, please check your entries for ACCOUNT VALUE and BLOCKED FUNDS"),
+      h5(tags$b("CURRENT MARGIN:"),textOutput("current_margin", inline = TRUE)),
+      #h5(tags$b("Deposit needed to maintain current margin:"),textOutput("current_margin_funds_needed", inline = TRUE)),
+      h5(tags$b("Margin after leverage change if no action taken:"),textOutput("revised_margin", inline = TRUE)),
+      
+      sliderInput("target_margin", "Input your target margin", 50, min = 25, max = 100),
       selectInput("ops", "Select Operation (only one operation available for now)",
-                  choices = c("How much do I need to top up by?")
+                  choices = c("How much do I need to top up by to achieve target margin?")
                  )
                  ),
     mainPanel(
